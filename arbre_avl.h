@@ -34,7 +34,80 @@ public:
     void supprimer (const V& cle) ;
 
 private:
+    size_t aux_compter(Arbre* root) ;
+    void aux_inserer(const V& cle, Arbre*& root) ;
+    const V& aux_rechercher(const V& cle, Arbre* root) const ;
+    void aux_effacer (Arbre* root) ;
+
+private:
     Arbre *racine ;
 };
+
+template<typename V>
+Arbre_AVL<V>::Arbre_AVL() : racine(nullptr) {
+
+}
+
+template<typename V>
+bool Arbre_AVL<V>::vide() const {
+    return racine == nullptr ;
+}
+
+template<typename V>
+size_t Arbre_AVL<V>::cardinal() const {
+    return aux_compter(racine) ;
+}
+
+template<typename V>
+size_t Arbre_AVL<V>::aux_compter(Arbre_AVL::Arbre *root) {
+    if (!root) return 0 ;
+    return 1 + aux_compter(root->gauche) + aux_compter(root->droite) ;
+}
+
+template<typename V>
+void Arbre_AVL<V>::inserer(const V &cle) {
+    aux_inserer(cle, racine) ;
+}
+
+template<typename V>
+void Arbre_AVL<V>::aux_inserer(const V& cle, Arbre*& root) {
+    if (!root) root = new Arbre(cle) ;
+    if (cle < root->cle) aux_inserer(cle, root->gauche) ;
+    if (cle > root->cle) aux_inserer(cle, root->droite) ;
+    throw std::runtime_error("insertion: duplication de clé") ;
+}
+
+template<typename V>
+const V &Arbre_AVL<V>::rechercher(const V &cle) const {
+    return  aux_rechercher(cle, racine) ;
+}
+
+template<typename V>
+const V &Arbre_AVL<V>::aux_rechercher(const V &cle, Arbre_AVL::Arbre *root) const {
+    if (!root) throw std::runtime_error("Clé introuvable dans l'arbre.") ;
+    if (cle < root->cle) return aux_rechercher(cle, root->gauche) ;
+    if (cle > root->cle) return aux_rechercher(cle, root->droite) ;
+    return root->cle ;
+}
+
+template<typename V>
+void Arbre_AVL<V>::aux_effacer(Arbre_AVL::Arbre *root) {
+    if (!root) return ;
+    aux_effacer(root->gauche) ;
+    aux_effacer(root->droite) ;
+    delete root ;
+}
+
+template<typename V>
+void Arbre_AVL<V>::effacer() {
+    aux_effacer(racine) ;
+    racine = nullptr ;
+}
+
+template<typename V>
+Arbre_AVL<V>::~Arbre_AVL() {
+    effacer() ;
+}
+
 
 #endif //ARBRE_AVL_ARBRE_AVL_H
