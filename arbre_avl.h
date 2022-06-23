@@ -13,10 +13,17 @@ private:
         Arbre *gauche ;
         Arbre *droite ;
 
-        explicit Arbre(V v) : cle(v), gauche(nullptr), droite(nullptr) {} ;
+        size_t hauteur ;
+
+        explicit Arbre(V v) : cle(v), gauche(nullptr), droite(nullptr), hauteur(0) {} ;
     };
 
 public:
+
+    Arbre_AVL() ;
+    Arbre_AVL(const Arbre_AVL<V>& source) ;
+    Arbre_AVL<V>& operator = (Arbre_AVL<V> rhs) ;
+    ~Arbre_AVL() ;
 
     bool vide () const ;
     size_t cardinal () const ;
