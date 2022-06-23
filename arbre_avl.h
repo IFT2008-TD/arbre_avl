@@ -7,7 +7,27 @@
 
 template<typename V>
 class Arbre_AVL {
-    V node ;
+private:
+    struct Arbre{
+        V cle ;
+        Arbre *gauche ;
+        Arbre *droite ;
+
+        explicit Arbre(V v) : cle(v), gauche(nullptr), droite(nullptr) {} ;
+    };
+
+public:
+
+    bool vide () const ;
+    size_t cardinal () const ;
+
+    void effacer () ;
+    const V&    rechercher(const V& cle) const ;
+    void inserer(const V& cle) ;
+    void supprimer (const V& cle) ;
+
+private:
+    Arbre *racine ;
 };
 
 #endif //ARBRE_AVL_ARBRE_AVL_H
