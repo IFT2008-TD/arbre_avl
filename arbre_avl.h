@@ -150,10 +150,10 @@ void Arbre_AVL<V>::aux_retirer_noeud(Arbre_AVL::Arbre*& root) {
 
 template<typename V>
 typename Arbre_AVL<V>::Arbre *Arbre_AVL<V>::aux_trouver_predecesseur_immediat(Arbre_AVL::Arbre *root) const {
-    Arbre *pred = root->gauche ;
-    while (pred->droite) pred = pred->droite ;
+    Arbre *succ = root->gauche ;
+    while (succ->droite) succ = succ->droite ;
 
-    return pred ;
+    return succ ;
 }
 
 
