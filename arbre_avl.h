@@ -38,6 +38,9 @@ private:
     void aux_inserer(const V& cle, Arbre*& root) ;
     const V& aux_rechercher(const V& cle, Arbre* root) const ;
     void aux_effacer (Arbre* root) ;
+    void aux_supprimer (const V& cle, Arbre*& root) ;
+    void aux_retirer_noeud(Arbre*& root) ;
+    Arbre* aux_trouver_predecesseur_immediat(Arbre* root) const ;
 
 private:
     Arbre *racine ;
@@ -72,9 +75,9 @@ void Arbre_AVL<V>::inserer(const V &cle) {
 template<typename V>
 void Arbre_AVL<V>::aux_inserer(const V& cle, Arbre*& root) {
     if (!root) root = new Arbre(cle) ;
-    if (cle < root->cle) aux_inserer(cle, root->gauche) ;
-    if (cle > root->cle) aux_inserer(cle, root->droite) ;
-    throw std::runtime_error("insertion: duplication de clé") ;
+    else if (cle < root->cle) aux_inserer(cle, root->gauche) ;
+    else if (cle > root->cle) aux_inserer(cle, root->droite) ;
+    else throw std::runtime_error("insertion: duplication de clé") ;
 }
 
 template<typename V>
@@ -107,6 +110,50 @@ void Arbre_AVL<V>::effacer() {
 template<typename V>
 Arbre_AVL<V>::~Arbre_AVL() {
     effacer() ;
+}
+
+template<typename V>
+void Arbre_AVL<V>::supprimer(const V &cle) {
+    aux_supprimer(cle, racine) ;
+
+}
+
+template<typename V>
+void Arbre_AVL<V>::aux_supprimer(const V &cle, Arbre_AVL::Arbre*& root) {
+    if (!root) throw std::runtime_error("suppression: clé absente") ;
+
+    if (cle > root->cle) aux_effacer(cle, root->droite) ;
+    else if (cle < root->cle) aux_effacer(cle, root->gauche) ;
+    else aux_retirer_noeud(root) ;
+}
+
+template<typename V>
+void Arbre_AVL<V>::aux_retirer_noeud(Arbre_AVL::Arbre*& root) {
+    Arbre *pred = nullptr ;
+
+    if (!root->gauche) {
+        if (!root->droite) {
+            delete root ;
+            root = nullptr ;
+            return ;
+        }
+        pred = root->droite ;
+    }
+    else
+        pred = aux_trouver_predecesseur_immediat(root) ;
+
+    root->cle = pred->cle ;
+    root->droite = pred->droite ;
+    root->gauche = pred->gauche ;
+    delete pred ;
+}
+
+template<typename V>
+typename Arbre_AVL<V>::Arbre *Arbre_AVL<V>::aux_trouver_predecesseur_immediat(Arbre_AVL::Arbre *root) const {
+    Arbre *pred = root->gauche ;
+    while (pred->droite) pred = pred->droite ;
+
+    return pred ;
 }
 
 
