@@ -13,7 +13,7 @@ private:
         Arbre *gauche ;
         Arbre *droite ;
 
-        size_t hauteur ;
+        int    hauteur ;
 
         explicit Arbre(V v) : cle(v), gauche(nullptr), droite(nullptr), hauteur(0) {} ;
     };
@@ -41,8 +41,10 @@ private:
     void        aux_effacer (Arbre* root) ;
     void        aux_supprimer (const V& cle, Arbre*& root) ;
     void        aux_retirer_noeud(Arbre*& root) ;
-    Arbre*      aux_trouver_predecesseur_immediat(Arbre* root) const ;
     Arbre*      aux_copier(Arbre *root) ;
+
+private:
+    int aux_hauteur(Arbre* root) ;
 
 private:
     Arbre *racine ;
@@ -80,6 +82,7 @@ void Arbre_AVL<V>::aux_inserer(const V& cle, Arbre*& root) {
     else if (cle < root->cle) aux_inserer(cle, root->gauche) ;
     else if (cle > root->cle) aux_inserer(cle, root->droite) ;
     else throw std::runtime_error("insertion: duplication de clé") ;
+    root->hauteur = aux_hauteur(root) ;
 }
 
 template<typename V>
@@ -127,6 +130,7 @@ void Arbre_AVL<V>::aux_supprimer(const V &cle, Arbre_AVL::Arbre*& root) {
     if (cle > root->cle) aux_supprimer(cle, root->droite) ;
     else if (cle < root->cle) aux_supprimer(cle, root->gauche) ;
     else aux_retirer_noeud(root) ;
+    if (root) root->hauteur = aux_hauteur(root) ;
 }
 
 template<typename V>
@@ -152,20 +156,20 @@ void Arbre_AVL<V>::aux_retirer_noeud(Arbre_AVL::Arbre*& root) {
         delete pred;
     }
     else {
-        auto pred = aux_trouver_predecesseur_immediat(root) ;
-        auto vieille_cle = root->cle ;
+        auto& pred = root->gauche ;
+        while (pred->droite) pred = pred->droite ;
         root->cle = pred->cle ;
-
-        aux_supprimer(pred->cle, pred) ;
+        if (!pred->gauche) {
+            delete pred ;
+            pred = nullptr ;
+            return ;
+        }
+        auto elim = pred->gauche ;
+        pred->cle = elim->cle ;
+        pred->droite = elim->droite ;
+        pred->gauche = elim->gauche ;
+        delete elim ;
     }
-}
-
-template<typename V>
-typename Arbre_AVL<V>::Arbre* Arbre_AVL<V>::aux_trouver_predecesseur_immediat(Arbre_AVL::Arbre *root) const {
-    Arbre *pred = root->gauche ;
-    while (pred->droite) pred = pred->droite ;
-
-    return pred ;
 }
 
 template<typename V>
@@ -192,6 +196,12 @@ Arbre_AVL<V> &Arbre_AVL<V>::operator=(Arbre_AVL<V> rhs) {
 template<typename V>
 Arbre_AVL<V>::Arbre_AVL(std::initializer_list<V> l) : racine(nullptr) {
     for (auto e: l) inserer(e) ;
+}
+
+template<typename V>
+int Arbre_AVL<V>::aux_hauteur(Arbre* root) {
+    if (!root) return -1 ;
+    return 1 + std::max(aux_hauteur(root->gauche), aux_hauteur(root->droite)) ;
 }
 
 

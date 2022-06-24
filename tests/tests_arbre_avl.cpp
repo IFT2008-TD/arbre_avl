@@ -135,3 +135,22 @@ TEST_F(Arbre_AVL_Test, arbre_deux_elements_vide_apres_2_suppressions) {
     EXPECT_THROW(arbre_2.supprimer(1), std::runtime_error) ;
     EXPECT_THROW(arbre_2.supprimer(2), std::runtime_error) ;
 }
+
+TEST_F(Arbre_AVL_Test, arbre_trois_elements_cardinal_2_apres_suppression) {
+    arbre_3.supprimer(2) ;
+    EXPECT_FALSE(arbre_3.vide()) ;
+    EXPECT_EQ(2, arbre_3.cardinal()) ;
+    EXPECT_EQ(1, arbre_3.rechercher(1)) ;
+    EXPECT_EQ(3, arbre_3.rechercher(3)) ;
+    EXPECT_THROW(arbre_3.rechercher(2), std::runtime_error) ;
+}
+
+TEST_F(Arbre_AVL_Test, arbre_trois_elements_cardinal_1_apres_2_suppressions) {
+    arbre_3.supprimer(2) ;
+    arbre_3.supprimer(1) ;
+    EXPECT_FALSE(arbre_3.vide()) ;
+    EXPECT_EQ(1, arbre_3.cardinal()) ;
+    EXPECT_EQ(3, arbre_3.rechercher(3)) ;
+    EXPECT_THROW(arbre_3.rechercher(1), std::runtime_error) ;
+    EXPECT_THROW(arbre_3.rechercher(2), std::runtime_error) ;
+}
