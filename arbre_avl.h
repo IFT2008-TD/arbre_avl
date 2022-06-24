@@ -9,7 +9,7 @@ template<typename V>
 class Arbre_AVL {
 private:
     struct Arbre{
-        V cle ;
+        V      cle ;
         Arbre *gauche ;
         Arbre *droite ;
 
@@ -20,31 +20,33 @@ private:
 
 public:
 
-    Arbre_AVL() ;
-    Arbre_AVL(std::initializer_list<V> l) ;
-    Arbre_AVL(const Arbre_AVL<V>& source) ;
-    Arbre_AVL<V>& operator = (Arbre_AVL<V> rhs) ;
-    ~Arbre_AVL() ;
+                    Arbre_AVL() ;
+                    Arbre_AVL(std::initializer_list<V> l) ;
+                    Arbre_AVL(const Arbre_AVL<V>& source) ;
+    Arbre_AVL<V>&   operator = (Arbre_AVL<V> rhs) ;
+                    ~Arbre_AVL() ;
 
-    bool    vide () const ;
-    size_t  cardinal () const ;
+    bool            vide () const ;
+    size_t          cardinal () const ;
 
-    void        effacer () ;
-    const V&    rechercher(const V& cle) const ;
-    void        inserer(const V& cle) ;
-    void        supprimer (const V& cle) ;
-
-private:
-    size_t      aux_compter(Arbre* root) const ;
-    void        aux_inserer(const V& cle, Arbre*& root) ;
-    const V&    aux_rechercher(const V& cle, Arbre* root) const ;
-    void        aux_effacer (Arbre* root) ;
-    void        aux_supprimer (const V& cle, Arbre*& root) ;
-    void        aux_retirer_noeud(Arbre*& root) ;
-    Arbre*      aux_copier(Arbre *root) ;
+    void            effacer () ;
+    const V&        rechercher(const V& cle) const ;
+    void            inserer(const V& cle) ;
+    void            supprimer (const V& cle) ;
 
 private:
-    int aux_hauteur(Arbre* root) ;
+    size_t          aux_compter(Arbre* root) const ;
+    void            aux_inserer(const V& cle, Arbre*& root) ;
+    const V&        aux_rechercher(const V& cle, Arbre* root) const ;
+    void            aux_effacer (Arbre* root) ;
+    void            aux_supprimer (const V& cle, Arbre*& root) ;
+    void            aux_retirer_noeud(Arbre*& root) ;
+    Arbre*          aux_copier(Arbre *root) ;
+
+private:
+    int         aux_hauteur(Arbre* root) ;
+    void        rotation_vers_la_droite(Arbre*& root) ;
+    void        rotation_vers_la_gauche(Arbre*& root) ;
 
 private:
     Arbre *racine ;
@@ -202,6 +204,22 @@ template<typename V>
 int Arbre_AVL<V>::aux_hauteur(Arbre* root) {
     if (!root) return -1 ;
     return 1 + std::max(aux_hauteur(root->gauche), aux_hauteur(root->droite)) ;
+}
+
+template<typename V>
+void Arbre_AVL<V>::rotation_vers_la_droite(Arbre_AVL::Arbre*& root) {
+    auto& new_root = root->droite ;
+    if (new_root->gauche) root->droite = new_root->gauche ;
+    new_root->gauche = root ;
+    root = new_root ;
+}
+
+template<typename V>
+void Arbre_AVL<V>::rotation_vers_la_gauche(Arbre_AVL::Arbre*& root) {
+    auto& new_root = root->gauche ;
+    if (new_root->droite) root->gauche = new_root->droite ;
+    new_root->droite = root ;
+    root = new_root ;
 }
 
 
