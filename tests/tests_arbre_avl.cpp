@@ -10,12 +10,17 @@ protected:
     Arbre_AVL<size_t> arbre_vide ;
     Arbre_AVL<size_t> arbre_1 ;
     Arbre_AVL<size_t> arbre_2 ;
+    Arbre_AVL<size_t> arbre_3 ;
 
     void SetUp () override {
         arbre_1.inserer(1) ;
 
         arbre_2.inserer(1) ;
         arbre_2.inserer(2) ;
+
+        arbre_3.inserer(2) ;
+        arbre_3.inserer(1) ;
+        arbre_3.inserer(3) ;
     }
 };
 
@@ -90,4 +95,43 @@ TEST_F(Arbre_AVL_Test, arbre_deux_elements_cles_1_2_presentes) {
 
 TEST_F(Arbre_AVL_Test, arbre_deux_elements_cle_absente_throw) {
     EXPECT_THROW(arbre_2.rechercher(3), std::runtime_error) ;
+}
+
+TEST_F(Arbre_AVL_Test, arbre_deux_elements_cle_absente_apres_suppression) {
+    arbre_2.supprimer(1) ;
+    EXPECT_THROW(arbre_2.rechercher(1), std::runtime_error) ;
+}
+
+TEST_F(Arbre_AVL_Test, arbre_deux_elements_cardinal_1_apres_suppression) {
+    arbre_2.supprimer(1) ;
+    EXPECT_EQ(1, arbre_2.cardinal()) ;
+}
+
+TEST_F(Arbre_AVL_Test, arbre_deux_elements_cle_restante_apres_suppression) {
+    arbre_2.supprimer(1) ;
+    EXPECT_EQ(2, arbre_2.rechercher(2)) ;
+}
+
+TEST_F(Arbre_AVL_Test, arbre_deux_elements_cle_2_absente_apres_suppression) {
+    arbre_2.supprimer(2) ;
+    EXPECT_THROW(arbre_2.rechercher(2), std::runtime_error) ;
+}
+
+TEST_F(Arbre_AVL_Test, arbre_deux_elements_cardinal_1_apres_suppression_cle_2) {
+    arbre_2.supprimer(2) ;
+    EXPECT_EQ(1, arbre_2.cardinal()) ;
+}
+
+TEST_F(Arbre_AVL_Test, arbre_deux_elements_cle_1_restante_apres_suppression) {
+    arbre_2.supprimer(2) ;
+    EXPECT_EQ(1, arbre_2.rechercher(1)) ;
+}
+
+TEST_F(Arbre_AVL_Test, arbre_deux_elements_vide_apres_2_suppressions) {
+    arbre_2.supprimer(1) ;
+    arbre_2.supprimer(2) ;
+    EXPECT_TRUE(arbre_2.vide()) ;
+    EXPECT_EQ(0, arbre_2.cardinal()) ;
+    EXPECT_THROW(arbre_2.supprimer(1), std::runtime_error) ;
+    EXPECT_THROW(arbre_2.supprimer(2), std::runtime_error) ;
 }

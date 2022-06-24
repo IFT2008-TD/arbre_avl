@@ -26,23 +26,23 @@ public:
     Arbre_AVL<V>& operator = (Arbre_AVL<V> rhs) ;
     ~Arbre_AVL() ;
 
-    bool vide () const ;
-    size_t cardinal () const ;
+    bool    vide () const ;
+    size_t  cardinal () const ;
 
-    void effacer () ;
+    void        effacer () ;
     const V&    rechercher(const V& cle) const ;
-    void inserer(const V& cle) ;
-    void supprimer (const V& cle) ;
+    void        inserer(const V& cle) ;
+    void        supprimer (const V& cle) ;
 
 private:
-    size_t aux_compter(Arbre* root) const ;
-    void aux_inserer(const V& cle, Arbre*& root) ;
-    const V& aux_rechercher(const V& cle, Arbre* root) const ;
-    void aux_effacer (Arbre* root) ;
-    void aux_supprimer (const V& cle, Arbre*& root) ;
-    void aux_retirer_noeud(Arbre*& root) ;
-    Arbre* aux_trouver_predecesseur_immediat(Arbre* root) const ;
-    void aux_copier(Arbre *root) ;
+    size_t      aux_compter(Arbre* root) const ;
+    void        aux_inserer(const V& cle, Arbre*& root) ;
+    const V&    aux_rechercher(const V& cle, Arbre* root) const ;
+    void        aux_effacer (Arbre* root) ;
+    void        aux_supprimer (const V& cle, Arbre*& root) ;
+    void        aux_retirer_noeud(Arbre*& root) ;
+    Arbre*      aux_trouver_predecesseur_immediat(Arbre* root) const ;
+    Arbre*      aux_copier(Arbre *root) ;
 
 private:
     Arbre *racine ;
@@ -132,7 +132,7 @@ void Arbre_AVL<V>::aux_supprimer(const V &cle, Arbre_AVL::Arbre*& root) {
 template<typename V>
 void Arbre_AVL<V>::aux_retirer_noeud(Arbre_AVL::Arbre*& root) {
 
-    if (!root->droite) {
+    if (!root->droite)  {
         if (!root->gauche) {
             delete root ;
             root = nullptr ;
@@ -143,6 +143,13 @@ void Arbre_AVL<V>::aux_retirer_noeud(Arbre_AVL::Arbre*& root) {
         root->gauche = pred->gauche ;
         root->droite = pred->droite ;
         delete pred ;
+    }
+    else if (!root->gauche) {
+        auto pred = root->droite;
+        root->cle = pred->cle;
+        root->gauche = pred->gauche;
+        root->droite = pred->droite;
+        delete pred;
     }
     else {
         auto pred = aux_trouver_predecesseur_immediat(root) ;
@@ -167,7 +174,8 @@ Arbre_AVL<V>::Arbre_AVL(const Arbre_AVL<V> &source) : racine(aux_copier(source.r
 }
 
 template<typename V>
-void Arbre_AVL<V>::aux_copier(Arbre_AVL::Arbre *root) {
+typename Arbre_AVL<V>::Arbre*
+Arbre_AVL<V>::aux_copier(Arbre_AVL::Arbre *root) {
     if (!root) return ;
     auto* retval = new Arbre(root->cle) ;
     retval->gauche = aux_copier(root->gauche) ;
