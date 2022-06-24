@@ -21,6 +21,7 @@ private:
 public:
 
     Arbre_AVL() ;
+    Arbre_AVL(std::initializer_list<V> l) ;
     Arbre_AVL(const Arbre_AVL<V>& source) ;
     Arbre_AVL<V>& operator = (Arbre_AVL<V> rhs) ;
     ~Arbre_AVL() ;
@@ -34,13 +35,13 @@ public:
     void supprimer (const V& cle) ;
 
 private:
-    size_t aux_compter(Arbre* root) ;
+    size_t aux_compter(Arbre* root) const ;
     void aux_inserer(const V& cle, Arbre*& root) ;
     const V& aux_rechercher(const V& cle, Arbre* root) const ;
     void aux_effacer (Arbre* root) ;
     void aux_supprimer (const V& cle, Arbre*& root) ;
     void aux_retirer_noeud(Arbre*& root) ;
-    Arbre*& aux_trouver_predecesseur_immediat(Arbre* root) const ;
+    Arbre* aux_trouver_predecesseur_immediat(Arbre* root) const ;
     void aux_copier(Arbre *root) ;
 
 private:
@@ -63,7 +64,7 @@ size_t Arbre_AVL<V>::cardinal() const {
 }
 
 template<typename V>
-size_t Arbre_AVL<V>::aux_compter(Arbre_AVL::Arbre *root) {
+size_t Arbre_AVL<V>::aux_compter(Arbre_AVL::Arbre *root) const {
     if (!root) return 0 ;
     return 1 + aux_compter(root->gauche) + aux_compter(root->droite) ;
 }
@@ -123,8 +124,8 @@ template<typename V>
 void Arbre_AVL<V>::aux_supprimer(const V &cle, Arbre_AVL::Arbre*& root) {
     if (!root) throw std::runtime_error("suppression: clé absente") ;
 
-    if (cle > root->cle) aux_effacer(cle, root->droite) ;
-    else if (cle < root->cle) aux_effacer(cle, root->gauche) ;
+    if (cle > root->cle) aux_supprimer(cle, root->droite) ;
+    else if (cle < root->cle) aux_supprimer(cle, root->gauche) ;
     else aux_retirer_noeud(root) ;
 }
 
@@ -153,7 +154,7 @@ void Arbre_AVL<V>::aux_retirer_noeud(Arbre_AVL::Arbre*& root) {
 }
 
 template<typename V>
-typename Arbre_AVL<V>::Arbre*& Arbre_AVL<V>::aux_trouver_predecesseur_immediat(Arbre_AVL::Arbre *root) const {
+typename Arbre_AVL<V>::Arbre* Arbre_AVL<V>::aux_trouver_predecesseur_immediat(Arbre_AVL::Arbre *root) const {
     Arbre *pred = root->gauche ;
     while (pred->droite) pred = pred->droite ;
 
@@ -178,6 +179,11 @@ template<typename V>
 Arbre_AVL<V> &Arbre_AVL<V>::operator=(Arbre_AVL<V> rhs) {
     std::swap(racine, rhs.racine) ;
     return *this ;
+}
+
+template<typename V>
+Arbre_AVL<V>::Arbre_AVL(std::initializer_list<V> l) : racine(nullptr) {
+    for (auto e: l) inserer(e) ;
 }
 
 
