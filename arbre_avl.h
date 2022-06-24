@@ -40,7 +40,8 @@ private:
     void aux_effacer (Arbre* root) ;
     void aux_supprimer (const V& cle, Arbre*& root) ;
     void aux_retirer_noeud(Arbre*& root) ;
-    Arbre* aux_trouver_predecesseur_immediat(Arbre* root) const ;
+    Arbre*& aux_trouver_predecesseur_immediat(Arbre* root) const ;
+    void aux_copier(Arbre *root) ;
 
 private:
     Arbre *racine ;
@@ -129,31 +130,54 @@ void Arbre_AVL<V>::aux_supprimer(const V &cle, Arbre_AVL::Arbre*& root) {
 
 template<typename V>
 void Arbre_AVL<V>::aux_retirer_noeud(Arbre_AVL::Arbre*& root) {
-    Arbre *pred = nullptr ;
 
-    if (!root->gauche) {
-        if (!root->droite) {
+    if (!root->droite) {
+        if (!root->gauche) {
             delete root ;
             root = nullptr ;
             return ;
         }
-        pred = root->droite ;
+        auto pred = root->gauche ;
+        root->cle = pred->cle ;
+        root->gauche = pred->gauche ;
+        root->droite = pred->droite ;
+        delete pred ;
     }
-    else
-        pred = aux_trouver_predecesseur_immediat(root) ;
+    else {
+        auto pred = aux_trouver_predecesseur_immediat(root) ;
+        auto vieille_cle = root->cle ;
+        root->cle = pred->cle ;
 
-    root->cle = pred->cle ;
-    root->droite = pred->droite ;
-    root->gauche = pred->gauche ;
-    delete pred ;
+        aux_supprimer(pred->cle, pred) ;
+    }
 }
 
 template<typename V>
-typename Arbre_AVL<V>::Arbre *Arbre_AVL<V>::aux_trouver_predecesseur_immediat(Arbre_AVL::Arbre *root) const {
-    Arbre *succ = root->gauche ;
-    while (succ->droite) succ = succ->droite ;
+typename Arbre_AVL<V>::Arbre*& Arbre_AVL<V>::aux_trouver_predecesseur_immediat(Arbre_AVL::Arbre *root) const {
+    Arbre *pred = root->gauche ;
+    while (pred->droite) pred = pred->droite ;
 
-    return succ ;
+    return pred ;
+}
+
+template<typename V>
+Arbre_AVL<V>::Arbre_AVL(const Arbre_AVL<V> &source) : racine(aux_copier(source.racine)) {
+
+}
+
+template<typename V>
+void Arbre_AVL<V>::aux_copier(Arbre_AVL::Arbre *root) {
+    if (!root) return ;
+    auto* retval = new Arbre(root->cle) ;
+    retval->gauche = aux_copier(root->gauche) ;
+    retval->droite = aux_copier(root->droite) ;
+    return retval ;
+}
+
+template<typename V>
+Arbre_AVL<V> &Arbre_AVL<V>::operator=(Arbre_AVL<V> rhs) {
+    std::swap(racine, rhs.racine) ;
+    return *this ;
 }
 
 
