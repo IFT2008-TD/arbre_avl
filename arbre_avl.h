@@ -41,6 +41,7 @@ private:
     void            aux_effacer (Arbre* root) ;
     void            aux_supprimer (const V& cle, Arbre*& root) ;
     void            aux_retirer_noeud(Arbre*& root) ;
+    void            aux_ecraser_noeud(Arbre*& root) ;
     Arbre*          aux_copier(Arbre *root) ;
 
 private:
@@ -314,6 +315,15 @@ bool Arbre_AVL<V>::arbre_est_avl() const {
 template<typename V>
 bool Arbre_AVL<V>::invariant() const {
     return arbre_est_avl() && arbre_est_valide() ;
+}
+
+template<typename V>
+void Arbre_AVL<V>::aux_ecraser_noeud(Arbre_AVL::Arbre *&root) {
+    auto pred = root ;
+    root->cle = pred->cle ;
+    root->gauche = pred->gauche ;
+    root->droite = pred->droite ;
+    delete pred ;
 }
 
 
