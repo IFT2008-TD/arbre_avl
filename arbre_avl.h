@@ -11,7 +11,18 @@ class Arbre_AVL {
 private:        // Type privé
 
     struct Arbre {
-        //eeeee
+        C cle ;
+        V valeur ;
+
+        int hauteur ;
+
+        Arbre* gauche ;
+        Arbre* droite ;
+
+
+
+        Arbre(C c, V v) : cle(c), valeur(v), hauteur(0), gauche(nullptr), droite(nullptr) {}
+
     };
 
 public:             // Interface
@@ -64,44 +75,61 @@ private:
     Arbre *racine ;
 };
 
+/**
+ * Constructeur par défaut: construit un arbre vide.
+ * @tparam C
+ * @tparam V
+ */
 template<typename C, typename V>
-Arbre_AVL<C, V>::Arbre_AVL()  {
+Arbre_AVL<C, V>::Arbre_AVL() : racine(nullptr) {
 
 }
 
 template<typename C, typename V>
 bool Arbre_AVL<C, V>::vide() const {
-    return false ;
+    return racine == nullptr ;
 }
 
 template<typename C, typename V>
 size_t Arbre_AVL<C, V>::cardinal() const {
-    return 0  ;
+    return aux_compter(racine)  ;
 }
 
 template<typename C, typename V>
 size_t Arbre_AVL<C, V>::aux_compter(Arbre_AVL::Arbre *root) const {
-    return 0 ;
+    if (!root) return 0 ;
+    return 1 + aux_compter(root->gauche) + aux_compter(root->droite) ;
 }
 
 template<typename C, typename V>
 void Arbre_AVL<C, V>::inserer(const C &cle, const V& valeur) {
-
+    aux_inserer(cle, valeur, racine) ;
 }
 
 template<typename C, typename V>
 void Arbre_AVL<C, V>::aux_inserer(const C& cle, const V& valeur, Arbre*& root) {
+    if (!root) root = new Arbre(cle, valeur) ;
+    else if (cle < root->cle) aux_inserer(cle, valeur, root->gauche) ;
+    else if (cle > root->cle) aux_inserer(cle, valeur, root->droite) ;
+
+    else throw std::logic_error("aux_inserer: Clé déjà présente") ;
+
+    mise_a_jour_hauteur(root) ; // modifier le champ root.hauteur = 1 + MAX(hauteur(root.gauche), hauteur(root.droite))
 
 }
 
 template<typename C, typename V>
 const V &Arbre_AVL<C, V>::rechercher(const C &cle) const {
-    return  V() ;
+    return aux_rechercher(cle, racine) ;
 }
 
 template<typename C, typename V>
-const V &Arbre_AVL<C, V>::aux_rechercher(const C &cle, Arbre_AVL::Arbre *root) const {
-    return V() ;
+const V &Arbre_AVL<C, V>::aux_rechercher(const C &cle, Arbre *root) const {
+    if (!root) throw std::runtime_error("aux_rechercher: clé absente") ;
+
+    if (cle > root->cle) return aux_rechercher(cle, root->droite) ;
+    if (cle < root->cle) return aux_rechercher(cle, root->gauche) ;
+    return root->valeur ;
 }
 
 template<typename C, typename V>
@@ -170,7 +198,11 @@ void Arbre_AVL<C, V>::rotation_vers_la_gauche(Arbre_AVL::Arbre*& root) {
 
 template<typename C, typename V>
 void Arbre_AVL<C, V>::mise_a_jour_hauteur(Arbre_AVL::Arbre *root) {
+    if (!root) return ;
+    int hauteur_gauche = root->gauche ? root->gauche->hauteur : -1 ;
+    int hauteur_droite = root->droite ? root->droite->hauteur : -1 ;
 
+    root->hauteur = 1 + std::max(hauteur_droite, hauteur_gauche)  ;
 }
 
 template<typename C, typename V>
