@@ -8,6 +8,9 @@
 template<typename V>
 class Arbre_AVL {
 private:
+    static const int HAUTEUR_NULLPTR = -1 ;
+
+private:
     struct Arbre{
         V      cle ;
         Arbre *gauche ;
@@ -44,9 +47,9 @@ private:
     Arbre*          aux_copier(Arbre *root) ;
 
 private:
-    int         aux_hauteur(Arbre* root) ;
-    void        rotation_vers_la_droite(Arbre*& root) ;
-    void        rotation_vers_la_gauche(Arbre*& root) ;
+    int             aux_hauteur(Arbre* root) ;
+    void            rotation_vers_la_droite(Arbre*& root) ;
+    void            rotation_vers_la_gauche(Arbre*& root) ;
 
 private:
     Arbre *racine ;
@@ -202,7 +205,7 @@ Arbre_AVL<V>::Arbre_AVL(std::initializer_list<V> l) : racine(nullptr) {
 
 template<typename V>
 int Arbre_AVL<V>::aux_hauteur(Arbre* root) {
-    if (!root) return -1 ;
+    if (!root) return HAUTEUR_NULLPTR ;
     return 1 + std::max(aux_hauteur(root->gauche), aux_hauteur(root->droite)) ;
 }
 
