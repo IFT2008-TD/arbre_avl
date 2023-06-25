@@ -44,7 +44,7 @@ private:            // Méthodes auxiliaires d'un arbre binaire de tri
     void            aux_effacer (Arbre*& root) ;
     void            aux_supprimer (const C& cle, Arbre*& root) ;
     void            aux_retirer_noeud(Arbre*& root) ;
-    void            aux_transplanter(Arbre*& enfant, Arbre*& parent) ;
+    void            aux_transplanter(Arbre* enfant, Arbre*& parent) ;
     void            aux_couper_feuille(Arbre*& root) ;
     Arbre*          aux_copier(Arbre *root) ;
 
@@ -207,29 +207,34 @@ Arbre_AVL<C, V> &Arbre_AVL<C, V>::operator=(Arbre_AVL<C, V> rhs) {
 template<typename C, typename V>
 int Arbre_AVL<C, V>::aux_hauteur(Arbre* root) const {
     if (!root) return -1 ;
-
-    return 1 + std::max(aux_hauteur(root->gauche), aux_hauteur(root->droite)) ;
-}
-
-template<typename C, typename V>
-void Arbre_AVL<C, V>::rotation_vers_la_droite(Arbre_AVL::Arbre*& root) {
-    auto& new_root = root->droite ;
-    if (new_root->gauche) root->droite = new_root->gauche ;
-    new_root->gauche = root ;
-    root = new_root ;
+    return root->hauteur ;
 }
 
 template<typename C, typename V>
 void Arbre_AVL<C, V>::rotation_vers_la_gauche(Arbre_AVL::Arbre*& root) {
+    auto& new_root = root->droite ;
+    if (new_root->gauche) root->droite = new_root->gauche ;
+    new_root->gauche = root ;
+    root = new_root ;
+
+    mise_a_jour_hauteur(root->gauche) ;
+    mise_a_jour_hauteur(root) ;
+}
+
+template<typename C, typename V>
+void Arbre_AVL<C, V>::rotation_vers_la_droite(Arbre_AVL::Arbre*& root) {
     auto& new_root = root->gauche ;
     if (new_root->droite) root->gauche = new_root->droite ;
     new_root->droite = root ;
     root = new_root ;
+
+    mise_a_jour_hauteur(root->droite) ;
+    mise_a_jour_hauteur(root) ;
 }
 
 template<typename C, typename V>
 void Arbre_AVL<C, V>::mise_a_jour_hauteur(Arbre_AVL::Arbre *root) {
-    root->hauteur = aux_hauteur(root) ;
+    root->hauteur = 1 + std::max(aux_hauteur(root->gauche), aux_hauteur(root->droite))  ;
 }
 
 template<typename C, typename V>
@@ -257,8 +262,8 @@ template<typename C, typename V>
 int Arbre_AVL<C, V>::facteur_equilibre_du_sous_arbre(Arbre_AVL::Arbre *root) const {
     if (!root) return 0 ;
 
-    int h_gauche = root->gauche ? root->gauche->hauteur : -1 ;
-    int h_droite = root->droite ? root->droite->hauteur : -1 ;
+    int h_gauche = aux_hauteur(root->gauche) ;
+    int h_droite = aux_hauteur(root->droite) ;
     return h_droite - h_gauche ;
 }
 
@@ -300,12 +305,10 @@ bool Arbre_AVL<C, V>::invariant() const {
 }
 
 template<typename C, typename V>
-void Arbre_AVL<C, V>::aux_transplanter(Arbre_AVL::Arbre*& enfant, Arbre_AVL::Arbre *&parent) {
-    parent->cle = enfant->cle ;
-    parent->valeur = enfant->valeur ;
-    parent->gauche = enfant->gauche ;
-    parent->droite = enfant->droite ;
+void Arbre_AVL<C, V>::aux_transplanter(Arbre_AVL::Arbre* enfant, Arbre_AVL::Arbre *&parent) {
+    *parent = *enfant ;
     delete enfant ;
+
 }
 
 template<typename C, typename V>
