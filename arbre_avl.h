@@ -190,7 +190,7 @@ Arbre_AVL<C, V>::Arbre_AVL(const Arbre_AVL<C, V> &source) : racine(aux_copier(so
 template<typename C, typename V>
 typename Arbre_AVL<C, V>::Arbre*
 Arbre_AVL<C, V>::aux_copier(Arbre_AVL::Arbre *root) {
-    if (!root) return ;
+    if (!root) return nullptr ;
 
     auto* retval = new Arbre(root->cle, root->valeur) ;
     retval->gauche = aux_copier(root->gauche) ;

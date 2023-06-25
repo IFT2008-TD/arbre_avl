@@ -154,3 +154,24 @@ TEST_F(Arbre_AVL_Test, arbre_trois_elements_cardinal_1_apres_2_suppressions) {
     EXPECT_THROW(arbre_3.rechercher(1), std::runtime_error) ;
     EXPECT_THROW(arbre_3.rechercher(2), std::runtime_error) ;
 }
+
+TEST_F(Arbre_AVL_Test, constructeur_copie) {
+    Arbre_AVL<size_t, size_t> copie(arbre_3) ;
+
+    EXPECT_EQ(3, copie.cardinal()) ;
+    EXPECT_EQ(1000, copie.rechercher(1)) ;
+    EXPECT_EQ(2000, copie.rechercher(2)) ;
+    EXPECT_EQ(3000, copie.rechercher(3)) ;
+    EXPECT_THROW(copie.rechercher(5), std::runtime_error) ;
+}
+
+TEST_F(Arbre_AVL_Test, operateur_assignation) {
+    Arbre_AVL<size_t, size_t> arbre(arbre_1) ; 
+    arbre = arbre_3 ;
+    EXPECT_EQ(3, arbre.cardinal()) ;
+    EXPECT_EQ(1000, arbre.rechercher(1)) ;
+    EXPECT_EQ(2000, arbre.rechercher(2)) ;
+    EXPECT_EQ(3000, arbre.rechercher(3)) ;
+    EXPECT_THROW(arbre.rechercher(5), std::runtime_error) ;
+    
+}
