@@ -72,9 +72,7 @@ private:
 };
 
 template<typename C, typename V>
-Arbre_AVL<C, V>::Arbre_AVL() : racine(nullptr) {
-
-}
+Arbre_AVL<C, V>::Arbre_AVL() : racine(nullptr) {}
 
 template<typename C, typename V>
 bool Arbre_AVL<C, V>::vide() const {
@@ -192,10 +190,10 @@ typename Arbre_AVL<C, V>::Arbre*
 Arbre_AVL<C, V>::aux_copier(Arbre_AVL::Arbre *root) {
     if (!root) return nullptr ;
 
-    auto* retval = new Arbre(root->cle, root->valeur) ;
-    retval->gauche = aux_copier(root->gauche) ;
-    retval->droite = aux_copier(root->droite) ;
-    return retval ;
+    auto* resultat = new Arbre(root->cle, root->valeur) ;
+    resultat->gauche = aux_copier(root->gauche) ;
+    resultat->droite = aux_copier(root->droite) ;
+    return resultat ;
 }
 
 template<typename C, typename V>
